@@ -60,6 +60,7 @@ cp .env.example .env
 
 Откройте `.env` в редакторе и убедитесь, что параметры корректны:
 
+```env
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres-user
@@ -77,6 +78,7 @@ JWT_SECRET=your_super_secret_jwt_key
 JWT_EXPIRES_IN=1d
 
 PORT=3000
+```
 
 ⚠️ **Важно:** В production обязательно измените JWT_SECRET на криптостойкий ключ!
 
@@ -89,17 +91,23 @@ docker-compose up -d
 docker-compose ps
 
 Должно быть:
+
+```bash
 NAME STATUS
 nestjs-articles-api-db-1 Up
 nestjs-articles-api-redis-1 Up
+```
 
 **6. Примените миграции:**
 
 npm run migration:run
 
 Вы должны увидеть:
+
+```bash
 Migration create-users has been executed successfully.
 Migration create-articles has been executed successfully.
+```
 
 **7. Запустите приложение:**
 
@@ -186,22 +194,28 @@ npm run test:watch
 
 ### Development
 
+```bash
 npm run start:dev # Запуск с hot-reload
 npm run start:prod # Production режим
 npm run start:debug # Debug режим
+```
 
 ### Миграции
 
+```bash
 npm run migration:generate -- src/database/migrations/MigrationName
 npm run migration:run
 npm run migration:revert
+```
 
 ### Docker
 
+```bash
 docker-compose up -d # Запустить контейнеры
 docker-compose down # Остановить
 docker-compose logs db # Логи PostgreSQL
 docker-compose logs redis # Логи Redis
+```
 
 ---
 
@@ -214,13 +228,22 @@ docker-compose logs redis # Логи Redis
 **Решение:**
 
 Проверьте статус контейнеров
+
+```bash
 docker-compose ps
+```
 
 Перезапустите контейнеры
+
+```bash
 docker-compose restart db
+```
 
 Проверьте логи
+
+```bash
 docker-compose logs db
+```
 
 ---
 
@@ -231,12 +254,18 @@ docker-compose logs db
 **Решение:**
 
 Проверьте Redis
+
+```bash
 docker-compose exec redis redis-cli ping
+```
 
 Должно вернуть: PONG
 
 Если нет, перезапустите
+
+```bash
 docker-compose restart redis
+```
 
 ---
 
@@ -247,9 +276,12 @@ docker-compose restart redis
 **Решение:**
 
 Удалите volumes и пересоздайте БД
+
+```bash
 docker-compose down -v
 docker-compose up -d
 npm run migration:run
+```
 
 ---
 
@@ -260,7 +292,10 @@ npm run migration:run
 **Решение:**
 
 1. Проверьте формат токена в header:
+
+```bash
    Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6...
+```
 
 2. Убедитесь, что JWT_SECRET установлен в .env
 
@@ -272,13 +307,9 @@ npm run migration:run
 
 **Judodev**
 
----
-
 ## 📄 Лицензия
 
 Этот проект создан в образовательных целях.
-
----
 
 <div align="center">
 
