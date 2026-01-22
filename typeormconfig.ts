@@ -1,7 +1,5 @@
-import { ConfigModule } from '@nestjs/config';
+import 'dotenv/config';
 import { DataSource } from 'typeorm';
-
-ConfigModule.forRoot({ isGlobal: true });
 
 export default new DataSource({
   type: 'postgres',
