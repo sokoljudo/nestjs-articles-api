@@ -64,7 +64,7 @@ cp .env.example .env
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres-user
-DB_PASSWORD=87654321
+DB_PASSWORD=12345678
 DB_NAME=articles
 
 POSTGRES_DB=articles
