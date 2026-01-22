@@ -84,11 +84,11 @@ PORT=3000
 
 **5. Запустите Docker контейнеры:**
 
-docker-compose up -d
+docker compose up -d
 
 Проверьте статус:
 
-docker-compose ps
+docker compose ps
 
 Должно быть:
 
@@ -211,10 +211,10 @@ npm run migration:revert
 ### Docker
 
 ```bash
-docker-compose up -d # Запустить контейнеры
-docker-compose down # Остановить
-docker-compose logs db # Логи PostgreSQL
-docker-compose logs redis # Логи Redis
+docker compose up -d # Запустить контейнеры
+docker compose down # Остановить
+docker compose logs db # Логи PostgreSQL
+docker compose logs redis # Логи Redis
 ```
 
 ---
@@ -230,19 +230,19 @@ docker-compose logs redis # Логи Redis
 Проверьте статус контейнеров
 
 ```bash
-docker-compose ps
+docker compose ps
 ```
 
 Перезапустите контейнеры
 
 ```bash
-docker-compose restart db
+docker compose restart db
 ```
 
 Проверьте логи
 
 ```bash
-docker-compose logs db
+docker compose logs db
 ```
 
 ---
@@ -256,7 +256,7 @@ docker-compose logs db
 Проверьте Redis
 
 ```bash
-docker-compose exec redis redis-cli ping
+docker compose exec redis redis-cli ping
 ```
 
 Должно вернуть: PONG
@@ -264,7 +264,7 @@ docker-compose exec redis redis-cli ping
 Если нет, перезапустите
 
 ```bash
-docker-compose restart redis
+docker compose restart redis
 ```
 
 ---
@@ -278,8 +278,8 @@ docker-compose restart redis
 Удалите volumes и пересоздайте БД
 
 ```bash
-docker-compose down -v
-docker-compose up -d
+docker compose down -v
+docker compose up -d
 npm run migration:run
 ```
 
