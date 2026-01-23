@@ -61,23 +61,24 @@ cp .env.example .env
 Откройте `.env` в редакторе и убедитесь, что параметры корректны:
 
 ```env
+# Database Configuration
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres-user
-DB_PASSWORD=12345678
+DB_PASSWORD=your_password_here
 DB_NAME=articles
 
-POSTGRES_DB=articles
-POSTGRES_USER=postgres-user
-POSTGRES_PASSWORD=12345678
-
+# Redis Configuration
 REDIS_HOST=localhost
 REDIS_PORT=6379
 
-JWT_SECRET=your_super_secret_jwt_key
+# JWT Configuration
+JWT_SECRET=your_super_secret_jwt_key_change_in_production
 JWT_EXPIRES_IN=1d
 
+# Application Configuration
 PORT=3000
+NODE_ENV=development
 ```
 
 ⚠️ **Важно:** В production обязательно измените JWT_SECRET на криптостойкий ключ!
