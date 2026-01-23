@@ -110,8 +110,6 @@ Migration create-users has been executed successfully.
 Migration create-articles has been executed successfully.
 ```
 
-⚠️ **Важно:** База поднимается в Docker через docker-compose, креды захардкожены в .env и docker-compose.yml. При первом старте всё создаётся автоматически. Если вы уже запускали Postgres с другими значениями переменных, перед повторным запуском выполните docker compose down -v.
-
 **7. Запустите приложение:**
 
 npm run start:dev
