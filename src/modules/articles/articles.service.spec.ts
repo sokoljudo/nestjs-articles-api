@@ -10,7 +10,7 @@ import { ArticleEntity } from './entities/article.entity';
 import { CreateArticleDto, UpdateArticleDto, GetArticlesQueryDto } from './dto';
 
 type FindAllResult = {
-  data: ArticleEntity[]; // ← Изменил items на data
+  data: ArticleEntity[];
   meta: {
     total: number;
     page: number;
@@ -137,7 +137,7 @@ describe('ArticlesService', () => {
   describe('findAll', () => {
     it('returns cached list on cache hit (no DB call)', async () => {
       const cached: FindAllResult = {
-        data: [], // ← Изменил items на data
+        data: [],
         meta: { total: 0, page: 1, limit: 10, totalPages: 0 },
       };
 
@@ -166,7 +166,7 @@ describe('ArticlesService', () => {
       const res = (await service.findAll(query)) as FindAllResult;
 
       expect(repo.createQueryBuilder).toHaveBeenCalledWith('article');
-      expect(res.data).toEqual(items); // ← Изменил items на data
+      expect(res.data).toEqual(items);
       expect(res.meta.total).toBe(1);
       expect(cache.set).toHaveBeenCalled();
     });

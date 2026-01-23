@@ -8,7 +8,6 @@ import { UsersService } from '../users/users.service';
 import { RegisterDto, LoginDto } from './dto';
 import type { UserEntity } from '../users/entities/user.entity';
 
-// Мокаем bcrypt полностью
 jest.mock('bcrypt');
 
 type JwtPayload = { sub: string; email: string };

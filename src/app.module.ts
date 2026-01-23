@@ -39,7 +39,6 @@ import { AuthModule } from './modules/auth/auth.module';
         const port = config.get<number>('REDIS_PORT');
 
         return {
-          // В доке Nest Redis подключается через stores + KeyvRedis [attached_file:1]
           stores: [new KeyvRedis(`redis://${host}:${port}`)],
           ttl: 300_000, // 5 min
         };

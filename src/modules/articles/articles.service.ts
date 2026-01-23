@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ForbiddenException,
   Inject,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -13,6 +14,8 @@ import { CreateArticleDto, GetArticlesQueryDto, UpdateArticleDto } from './dto';
 
 @Injectable()
 export class ArticlesService {
+  private readonly logger = new Logger(ArticlesService.name);
+
   constructor(
     @InjectRepository(ArticleEntity)
     private readonly articlesRepo: Repository<ArticleEntity>,
@@ -28,26 +31,21 @@ export class ArticlesService {
       publishedAt: dto.publishedAt ? new Date(dto.publishedAt) : null,
     });
 
-    const saved = await this.articlesRepo.save(article);
-
-    // Инвалидация кэша списка статей
-    await this.invalidateListCache();
-
-    return saved;
+    return await this.articlesRepo.save(article);
   }
 
   async findAll(query: GetArticlesQueryDto) {
     const cacheKey = this.generateListCacheKey(query);
 
-    console.log('🔍 Checking cache for key:', cacheKey);
+    this.logger.debug(`Checking cache for key: ${cacheKey}`);
 
     const cached = await this.cacheManager.get(cacheKey);
     if (cached) {
-      console.log('✅ Cache HIT!');
+      this.logger.debug('Cache HIT');
       return cached;
     }
 
-    console.log('❌ Cache MISS, querying DB...');
+    this.logger.debug('Cache MISS, querying DB');
 
     const page = query.page ?? 1;
     const limit = query.limit ?? 10;
@@ -88,9 +86,8 @@ export class ArticlesService {
       },
     };
 
-    console.log('💾 Saving to cache with key:', cacheKey);
-    await this.cacheManager.set(cacheKey, result, 60000);
-    console.log('✅ Saved to cache!');
+    this.logger.debug(`Saving to cache with key: ${cacheKey}`);
+    await this.cacheManager.set(cacheKey, result);
 
     return result;
   }
@@ -98,11 +95,13 @@ export class ArticlesService {
   async findOne(id: string) {
     const cacheKey = `article:${id}`;
 
-    // Пытаемся получить из кэша
     const cached = await this.cacheManager.get<ArticleEntity>(cacheKey);
     if (cached) {
+      this.logger.debug(`Cache HIT for article ${id}`);
       return cached;
     }
+
+    this.logger.debug(`Cache MISS for article ${id}`);
 
     const article = await this.articlesRepo.findOne({ where: { id } });
 
@@ -110,8 +109,7 @@ export class ArticlesService {
       throw new NotFoundException(`Article with ID "${id}" not found`);
     }
 
-    // Сохраняем в кэш
-    await this.cacheManager.set(cacheKey, article, 60000);
+    await this.cacheManager.set(cacheKey, article);
 
     return article;
   }
@@ -124,15 +122,11 @@ export class ArticlesService {
     }
 
     Object.assign(article, dto);
-    await this.articlesRepo.save(article);
+    const updated = await this.articlesRepo.save(article);
 
-    // Инвалидация кэша конкретной статьи
     await this.cacheManager.del(`article:${id}`);
 
-    // Инвалидация кэша списка статей
-    await this.invalidateListCache();
-
-    return this.findOne(id);
+    return updated;
   }
 
   async remove(id: string, currentUserId: string) {
@@ -144,14 +138,8 @@ export class ArticlesService {
 
     await this.articlesRepo.remove(article);
 
-    // Инвалидация кэша конкретной статьи
     await this.cacheManager.del(`article:${id}`);
-
-    // Инвалидация кэша списка статей
-    await this.invalidateListCache();
   }
-
-  // Вспомогательные методы для работы с кэшем
 
   private generateListCacheKey(query: GetArticlesQueryDto): string {
     const parts = [
@@ -166,11 +154,5 @@ export class ArticlesService {
     if (query.publishedTo) parts.push(`to:${query.publishedTo}`);
 
     return parts.join(':');
-  }
-
-  private async invalidateListCache(): Promise<void> {
-    // Простая инвалидация: используем Redis SCAN через store
-    // Безопасный подход - сбрасываем весь кэш (для production лучше использовать tags)
-    await this.cacheManager.clear();
   }
 }

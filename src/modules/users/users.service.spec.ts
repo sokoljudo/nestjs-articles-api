@@ -22,7 +22,6 @@ describe('UsersService', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         UsersService,
-        // getRepositoryToken(UserEntity) — правильный токен для моков репозитория в Nest+TypeORM [web:667]
         { provide: getRepositoryToken(UserEntity), useValue: usersRepoMock },
       ],
     }).compile();
@@ -95,7 +94,6 @@ describe('UsersService', () => {
       expect(usersRepoMock.create).toHaveBeenCalledTimes(1);
       expect(usersRepoMock.save).toHaveBeenCalledTimes(1);
 
-      // Проверяем аргументы без expect.any / objectContaining (чтобы не ловить ESLint any)
       const createCall = usersRepoMock.create.mock.calls.at(0);
       expect(createCall).toBeDefined();
       const [createArg] = createCall!;

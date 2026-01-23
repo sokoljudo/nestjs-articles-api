@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { RegisterDto, LoginDto } from './dto';
 
+// 10 раундов хеширования для баланса между безопасностью и скоростью
 const SALT_ROUNDS = 10;
 
 @Injectable()
@@ -29,28 +30,26 @@ export class AuthService {
       passwordHash,
     });
 
-    // Генерируем JWT токен сразу после регистрации
     const payload = { sub: user.id, email: user.email };
     const accessToken = this.jwtService.sign(payload);
 
     return {
-      accessToken, // ← camelCase
+      accessToken,
       user: {
         id: user.id,
         email: user.email,
-        createdAt: user.createdAt.toISOString(), // ← Date -> ISO string
+        createdAt: user.createdAt.toISOString(),
       },
     };
   }
 
   async login(dto: LoginDto) {
-    // 1. Проверяю, что user существует
     const user = await this.usersService.findByEmail(dto.email);
     if (!user) {
+      // Не раскрываем существование email в базе - защита от enumeration атак
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // 2. Проверяю пароль
     const isPasswordValid = await bcrypt.compare(
       dto.password,
       user.passwordHash,
@@ -59,16 +58,15 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // 3. Создаю payload и подписываю токен
     const payload = { sub: user.id, email: user.email };
     const accessToken = this.jwtService.sign(payload);
 
     return {
-      accessToken, // ← camelCase
+      accessToken,
       user: {
         id: user.id,
         email: user.email,
-        createdAt: user.createdAt.toISOString(), // ← Date -> ISO string
+        createdAt: user.createdAt.toISOString(),
       },
     };
   }
